@@ -2,6 +2,7 @@
 import flet as ft
 import shop
 import menu
+import combat
 
 def main(page: ft.Page):
     page.title = "Mitt äventyr"
@@ -9,7 +10,9 @@ def main(page: ft.Page):
     player = {
         "gold": 10,
         "health": 100,
-        "strength": 34
+        "strength": 34,
+        "weapon": 10,
+        "experience": 0
     }
 
     counter = 0
@@ -50,6 +53,53 @@ def main(page: ft.Page):
 
         show_shop(e)
 
+    def show_bridge(e):
+        page.clean()
+
+        page.add(
+        ft.Text("Bron över den mörka ravinen", size=30),
+        ft.Text("Du kommer fram till en gammal träbro."),
+        ft.Text("Plötsligt kliver ett stort troll fram och blockerar vägen!"),
+        ft.Text("Trollet ryter: Ingen passerar min bro!"),
+        ft.Text("Vad vill du göra?"),
+        ft.Button("Slåss mot trollet", on_click=fight),
+        ft.Button("Tillbaka till byn", on_click=show_village)
+    )
+
+
+    def fight(e):
+     if player["health"] > 0:
+        player["health"], player["experience"] = combat.Fight(
+            player["health"],
+            player["strength"],
+            player["weapon"],
+            player["experience"]
+        )
+     if player["health"] <= 0:
+        page.clean()
+        page.add(
+            ft.Text("Du har förlorat!", size=30),
+            ft.Text("Du orkade inte besegra trollet."),
+            ft.Button("Tillbaka till byn", on_click=show_village)
+        )
+     else:
+         page.clean()
+         page.add(
+              ft.Text("Striden mot trollet!", size=30),
+            ft.Text("Du attackerar trollet!"),
+            ft.Text("Din hälsa: " + str(player["health"])),
+            ft.Text("Din erfarenhet: " + str(player["experience"])),
+            ft.Button("Slåss igen", on_click=fight),
+            ft.Button("Tillbaka till bron", on_click=show_bridge)
+         )
+        
+         
+
+        
+
+        
+    
+
     def show_village(e=None):
         page.clean()
 
@@ -61,6 +111,7 @@ def main(page: ft.Page):
             ft.Text("Health: " + str(player["health"])),
             ft.Button("Träna", on_click=train),
             ft.Button("Affären", on_click=show_shop),
+            ft.Button("Gå mot bron", on_click=show_bridge),
             ft.Button("Meny", on_click=show_menu)
         )
 
