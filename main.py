@@ -1,21 +1,50 @@
+
+import flet as ft
 import shop
 import menu
 
-player = {"gold": 10, "health": 100, "strength": 34}
+def main(page: ft.Page):
+    page.title = "Mitt äventyr"
 
-counter = 0
-current_scene = "village"
+    player = {
+        "gold": 10,
+        "health": 100,
+        "strength": 34
+    }
 
-player["strength"], counter = shop.LearningAcademy(player["strength"], counter)
+    counter = 0
 
-print(counter, ": Nu är min strength:", player["strength"])
+    def train(e):
+        nonlocal counter
 
-menu.Menu()
+        player["strength"], counter = shop.LearningAcademy(
+            player["strength"], counter
+        )
 
-player["strength"], counter = shop.LearningAcademy(player["strength"], counter)
+        show_village()
 
-print(counter, ": Nu är min strength:", player["strength"])
+    def show_menu(e=None):
+        page.clean()
 
-print("Gold:", player["gold"])
-print("Health:", player["health"])
-print("Strength:", player["strength"])
+        page.add(
+            ft.Text("Meny", size=30),
+            ft.Text("Välkommen till äventyret!"),
+            ft.Button("Tillbaka till byn", on_click=show_village)
+        )
+
+    def show_village(e=None):
+        page.clean()
+
+        page.add(
+            ft.Text("Välkommen till byn!", size=30),
+            ft.Text("Vad vill du göra?"),
+            ft.Text("Strength: " + str(player["strength"])),
+            ft.Text("Gold: " + str(player["gold"])),
+            ft.Text("Health: " + str(player["health"])),
+            ft.Button("Träna", on_click=train),
+            ft.Button("Meny", on_click=show_menu)
+        )
+
+    show_village()
+
+ft.run(main)
